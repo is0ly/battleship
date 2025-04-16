@@ -1,6 +1,34 @@
 use std::collections::HashSet;
 use std::io;
 
+#[derive(Debug)]
+enum ShipType {
+    Battleship,
+    Cruiser,
+    Destroyer,
+    Motortorpedoboot,
+}
+
+impl ShipType  {
+    fn decks(&self) -> u8 {
+        match self {
+            ShipType::Battleship => 4,
+            ShipType::Cruiser => 3,
+            ShipType::Destroyer=> 2,
+            ShipType::Motortorpedoboot => 1,
+        }
+    }
+    
+    fn as_str(&self) -> &'static str {
+        match self {
+            ShipType::Battleship => "Battleship",
+            ShipType::Cruiser => "Cruiser",
+            ShipType::Destroyer=> "Destroyer",
+            ShipType::Motortorpedoboot => "Motortorpedoboot",
+        }
+    }
+}
+
 struct Ship {
     name: String,
     decks_amount: u8,
@@ -9,34 +37,32 @@ struct Ship {
 }
 
 struct NavalFleet {
-    battleship: Vec<u8>,
-    cruiser: Vec<u8>,
-    destroyer: Vec<u8>,
-    motortorpedoboot: Vec<u8>,
+    ships: Vec<Ship>,
 }
 
 fn main() {
-    let mut battleship = create_ship("Battleship", 4);
-    
-    println!("{}", battleship.name);
-    println!("{}", battleship.decks_amount);
-    println!("{}", battleship.is_live);
-    
-    battleship.is_live = false;
-    
-    print_field(battleship);
+    // let mut battleship = create_ship("Battleship", 4);
 
+    let mut player_naval_fleet = create_naval_fleet();
+
+    println!("{}", player_naval_fleet.battleship[0].name);
+    println!("{}", player_naval_fleet.battleship[0].decks_amount);
+    println!("{}", player_naval_fleet.battleship[0].is_live);
+
+    player_naval_fleet.battleship[0].is_live = false;
+
+    print_field(player_naval_fleet);
 }
 
-fn print_field(ship: Ship) {
-    for n in 0..10 {
-        for o in 0..10 {
+fn print_field(user_naval_fleet: NavalFleet) {
+    for n in (1..11).rev() {
+        for o in 1..11 {
             let coords = (n, o);
-            if ship.occupied.contains(&coords) {
+            if user_naval_fleet.battleship[0].occupied.contains(&coords) {
                 print!("{} ", 'x');
                 continue;
             }
-            if o == 9 {
+            if o == 10 {
                 println!("");
                 continue;
             }
@@ -80,10 +106,41 @@ fn create_ship(name: &str, decks_amount: u8) -> Ship {
     }
 }
 
-fn create naval_fleet() -> NavalFleet {
-    
+fn create_naval_fleet() -> NavalFleet {
+    let battleship_count: u8 = 1;
+    // let cruiser_count: u8 = 2;
+    // let destroyer_count: u8 = 3;
+    // let motortorpedoboot_count: u8 = 4;
+
+    let mut battleships = vec![];
+    // let mut cruisers = vec![];
+    // let mut destroyers = vec![];
+    // let mut motortorpedoboots = vec![];
+
+    for _n in 0..battleship_count {
+        println!("Create battleship - 1");
+        battleships.push(create_ship("Battleship", 4));
+    }
+
+    // for n in 0..cruiser_count {
+    //     println!("Create cruisers - 2");
+    //     battleships.push(create_ship("Cruiser", 3));
+    // }
+
+    // for n in 0..destroyer_count {
+    //     println!("Create destroyers - 3");
+    //     battleships.push(create_ship("Destroyer", 2));
+    // }
+
+    // for n in 0.. motortorpedoboot_count {
+    //     println!("Create motortorpedoboots - 4");
+    //     battleships.push(create_ship("Motortorpedoboot", 1));
+    // }
+
     NavalFleet {
-        
+        battleship: battleships,
+        // cruiser: cruisers,
+        // destroyer: destroyers,
+        // motortorpedoboot: motortorpedoboots,
     }
 }
-
