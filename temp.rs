@@ -1,21 +1,18 @@
 use std::collections::HashSet;
 use std::io;
 
-// battleship - 1
-// cruiser - 2
-//  destroyer - 3
-// motortorpedoboot - 4
-
-struct NavalFleet {
-    
-}
-
-
 struct Ship {
     name: String,
     decks_amount: u8,
     occupied: HashSet<(u8, u8)>,
     is_live: bool,
+}
+
+struct NavalFleet {
+    battleship: Vec<u8>,
+    cruiser: Vec<u8>,
+    destroyer: Vec<u8>,
+    motortorpedoboot: Vec<u8>,
 }
 
 fn main() {
@@ -82,3 +79,11 @@ fn create_ship(name: &str, decks_amount: u8) -> Ship {
         is_live: true,
     }
 }
+
+fn create naval_fleet() -> NavalFleet {
+    
+    NavalFleet {
+        
+    }
+}
+
