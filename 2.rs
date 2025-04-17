@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 use std::io;
-use std::io::{Write};
 
 #[derive(Debug)]
 enum ShipType {
@@ -17,17 +16,31 @@ struct Ship {
     is_live: bool,
 }
 
-fn main () {
-    let mut my_ship = Ship {
-        name: String::from("Cruiser-1"),
-        ship_type: ShipType::Cruiser,
-        decks_amount: 3,
-        occupied: HashSet::new(),
-        is_live: true,
-    };
-    
-    for n in 0..my_ship.decks_amount {
-        clear_console();
+impl Ship {
+    fn new(name: String, ship_type: ShipType, occupied: HashSet<(u8, u8)>, is_live: bool) -> Self {
+        let decks_amount = match ship_type {
+            ShipType::Battleship => 4,
+            ShipType::Cruiser => 3,
+        };
+        Ship {
+            name,
+            ship_type,
+            decks_amount,
+            occupied,
+            is_live,
+        }
+    }
+}
+
+fn main() {
+    let mut my_ship = Ship::new(
+        String::from("Battleship-1"),
+        ShipType::Battleship,
+        HashSet::new(),
+        true,
+    );
+
+    for _n in 0..my_ship.decks_amount {
         my_ship.occupied.insert(get_user_coordinates());
         print_field(&my_ship);
     }
@@ -65,12 +78,5 @@ fn get_user_coordinates() -> (u8, u8) {
         .map(|c| c.to_digit(10).unwrap() as u8)
         .collect();
 
-    let coordinates = (digits[0], digits[1]);
-
-    coordinates
-}
-
-fn clear_console() {
-    print!("\x1B[2J\x1B[1;1H");
-    io::stdout().flush().unwrap();
+    (digits[0], digits[1])
 }
