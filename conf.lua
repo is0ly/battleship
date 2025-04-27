@@ -94,3 +94,60 @@ fn main() -> std::io::Result<()> {
     execute!(std::io::stdout(), Clear(ClearType::All))?;
     Ok(())
 }
+
+
+use std::thread;
+use std::time::Duration;
+use crossterm::{
+    execute, queue,
+    terminal::{Clear, ClearType, enable_raw_mode, disable_raw_mode},
+    cursor::MoveTo,
+    style::Print,
+    event::{poll, read, Event, KeyCode},
+};
+
+fn main() -> std::io::Result<()> {
+    // Включаем raw mode для корректного чтения клавиш
+    enable_raw_mode()?;
+
+    let mut counter = 0;
+    loop {
+        // Увеличиваем таймаут до 100 мс для надёжного чтения
+        if poll(Duration::from_millis(100))? {
+            let event = read()?;
+            // Отладочный вывод: показываем, какое событие пришло
+            println!("Event: {:?}", event);
+
+            if let Event::Key(event) = event {
+                // Проверяем, что за клавиша
+                match event.code {
+                    KeyCode::Esc => {
+                        println!("Esc pressed, exiting...");
+                        break;
+                    }
+                    KeyCode::Char('q') => {
+                        println!("q pressed, exiting...");
+                        break;
+                    }
+                    _ => println!("Pressed: {:?}", event.code),
+                }
+            }
+        }
+
+        counter += 1;
+        queue!(
+            std::io::stdout(),
+            Clear(ClearType::All),
+            MoveTo(0, 0),
+            Print(format!("Counter: {}", counter))
+        )?;
+        execute!(std::io::stdout())?;
+
+        thread::sleep(Duration::from_secs(1));
+    }
+
+    // Выключаем raw mode и очищаем экран перед выходом
+    disable_raw_mode()?;
+    execute!(std::io::stdout(), Clear(ClearType::All))?;
+    Ok(())
+}
