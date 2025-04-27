@@ -26,3 +26,28 @@ return {
     end,
   },
 }
+
+
+
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    vim.cmd("hi Normal guibg=NONE ctermbg=NONE")
+    vim.cmd("hi NormalNC guibg=NONE ctermbg=NONE")
+    vim.cmd("hi NormalFloat guibg=NONE ctermbg=NONE")
+    vim.cmd("hi FloatBorder guibg=NONE ctermbg=NONE")
+    vim.cmd("hi VertSplit guibg=NONE ctermbg=NONE")
+    vim.cmd("hi SignColumn guibg=NONE ctermbg=NONE")
+    vim.cmd("hi StatusLine guibg=NONE ctermbg=NONE")
+    vim.cmd("hi StatusLineNC guibg=NONE ctermbg=NONE")
+    vim.cmd("hi Pmenu guibg=NONE ctermbg=NONE")
+    vim.cmd("hi PmenuSel guibg=NONE ctermbg=NONE")
+    vim.cmd("hi PmenuSbar guibg=NONE ctermbg=NONE")
+    vim.cmd("hi PmenuThumb guibg=NONE ctermbg=NONE")
+    vim.cmd("hi MsgArea guibg=NONE ctermbg=NONE")
+    vim.cmd("hi CmdLine guibg=NONE ctermbg=NONE")
+    vim.cmd("hi TelescopeNormal guibg=NONE ctermbg=NONE")
+    vim.cmd("hi TelescopeBorder guibg=NONE ctermbg=NONE")
+  end,
+})
