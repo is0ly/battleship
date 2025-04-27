@@ -51,3 +51,46 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     vim.cmd("hi TelescopeBorder guibg=NONE ctermbg=NONE")
   end,
 })
+
+
+
+use std::thread;
+use std::time::Duration;
+use crossterm::{
+    execute, queue,
+    terminal::{Clear, ClearType},
+    cursor::MoveTo,
+    style::Print,
+    event::{poll, read, Event, KeyCode},
+};
+
+fn main() -> std::io::Result<()> {
+    let mut counter = 0;
+    loop {
+        if poll(Duration::from_millis(16))? {
+            if let Event::Key(event) = read()? {
+                if event.code == KeyCode::Esc {
+                    break;
+                }
+            }
+        }
+
+        // Очищаем экран, перемещаем курсор и выводим счётчик
+        counter += 1;
+        queue!(
+            std::io::stdout(),
+            Clear(ClearType::All),          // Очистка экрана
+            MoveTo(0, 0),                   // Курсор в верхний левый угол
+            Print(format!("Counter: {}", counter))  // Выводим счётчик
+        )?;
+
+        // Выполняем все команды
+        execute!(std::io::stdout())?;
+
+        thread::sleep(Duration::from_secs(1));
+    }
+
+    // Очищаем экран перед выходом
+    execute!(std::io::stdout(), Clear(ClearType::All))?;
+    Ok(())
+}
