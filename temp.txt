@@ -476,3 +476,61 @@ for (var i: i32 = 0; i < 3; i = i + 1) {
         uv = uv + (p / l) * (sin(z) + 1.0) * abs(sin(l * 9.0 - z - z));
         c[i] = 0.01 / length(mod(uv, vec2<f32>(1.0, 1.0)) - vec2<f32>(0.5, 0.5));
     }
+
+
+
+
+// === UNIFORMS ===
+@group(0) @binding(0) var<uniform> iTime: f32;
+@group(0) @binding(1) var<uniform> iResolution: vec2<f32>;
+
+
+// === GLSL-подобная mod-функция ===
+fn mod_f(a: f32, b: f32) -> f32 {
+    return a - b * floor(a / b);
+}
+
+fn mod_v2(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
+    return vec2<f32>(
+        mod_f(a.x, b.x),
+        mod_f(a.y, b.y)
+    );
+}
+
+
+// === ВЕРШИННЫЙ ШЕЙДЕР ===
+// Полный fullscreen треугольник на 3 вершины
+@vertex
+fn vtx_main(@builtin(vertex_index) vertex_index: u32) -> @builtin(position) vec4<f32> {
+    var pos = array<vec2<f32>, 3>(
+        vec2<f32>(-1.0, -1.0),
+        vec2<f32>( 3.0, -1.0),
+        vec2<f32>(-1.0,  3.0)
+    );
+    let p = pos[vertex_index];
+    return vec4<f32>(p, 0.0, 1.0);
+}
+
+
+// === ФРАГМЕНТНЫЙ ШЕЙДЕР ===
+@fragment
+fn frag_main(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
+    var c: vec3<f32> = vec3<f32>(0.0);
+    var l: f32;
+    var z: f32 = iTime;
+
+    for (var i: i32 = 0; i < 3; i = i + 1) {
+        var p: vec2<f32> = fragCoord.xy / iResolution;
+        var uv: vec2<f32> = p;
+        p = p - vec2<f32>(0.5, 0.5);
+        p.x = p.x * (iResolution.x / iResolution.y);
+        z = z + 0.07;
+        l = length(p);
+        uv = uv + (p / l) * (sin(z) + 1.0) * abs(sin(l * 9.0 - z - z));
+
+        let uv_mod = mod_v2(uv, vec2<f32>(1.0, 1.0));
+        c[i] = 0.01 / length(uv_mod - vec2<f32>(0.5, 0.5));
+    }
+
+    return vec4<f32>(c / l, 1.0);
+}
